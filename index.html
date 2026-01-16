@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sube tus Recuerdos 💐</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Playfair Display', serif;
+    background:url('https://i.imgur.com/kXkQ0YJ.jpg') no-repeat center/cover;
+    min-height:100vh;
+    color:#5a3e36;
+}
+.overlay{
+    background:rgba(255,255,255,0.9);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.box{
+    background:#fff;
+    padding:35px;
+    border-radius:22px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    text-align:center;
+    max-width:400px;
+}
+h1{
+    color:#b48b5a;
+}
+input[type=file]{
+    margin:20px 0;
+}
+button{
+    background:#b48b5a;
+    color:#fff;
+    border:none;
+    padding:12px 28px;
+    border-radius:30px;
+    cursor:pointer;
+    font-size:16px;
+}
+button:hover{
+    background:#9c7447;
+}
+#contador{
+    margin-top:10px;
+    font-style:italic;
+    color:#7a5c4d;
+}
+</style>
+</head>
+<body>
+
+<div class="overlay">
+<div class="box">
+
+<h1>💘 Comparte tus Recuerdos con nosotros 💘</h1>
+<p style="text-align:center;">EyL</p>
+<p>Selecciona todas las fotos y archivos que quieras compartir</p>
+
+<input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx">
+<div id="contador"></div>
+
+<button onclick="subir()">Subir recuerdos</button>
+
+<p style="margin-top:25px;font-style:italic;">
+Gracias por acompañarnos en este día tan especial ❤️
+</p>
+
+</div>
+</div>
+
+<script>
+const input = document.getElementById("fileInput");
+const contador = document.getElementById("contador");
+
+input.addEventListener("change", () => {
+    contador.textContent = input.files.length > 0
+        ? `Has seleccionado ${input.files.length} archivo(s)`
+        : "";
+});
+
+function subir(){
+    if(input.files.length === 0){
+        alert("Selecciona al menos un archivo 💐");
+        return;
+    }
+
+    let contenido = JSON.parse(localStorage.getItem("contenido")) || [];
+    let cargados = 0;
+
+    Array.from(input.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            contenido.push({
+                nombre: file.name,
+                tipo: file.type,
+                data: e.target.result
+            });
+
+            cargados++;
+            if(cargados === input.files.length){
+                localStorage.setItem("contenido", JSON.stringify(contenido));
+                alert(`💍 ${cargados} recuerdo(s) subido(s) con éxito`);
+                input.value = "";
+                contador.textContent = "";
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
+</script>
+
+</body>
+</html>
