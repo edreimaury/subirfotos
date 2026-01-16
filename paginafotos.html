@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Nuestra Boda 💍</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Playfair Display', serif;
+    background: url('https://i.imgur.com/5rVYQeP.jpg') no-repeat center/cover;
+    min-height:100vh;
+    color:#5a3e36;
+}
+.overlay{
+    background:rgba(255,255,255,0.85);
+    min-height:100vh;
+    padding:30px;
+}
+h1{
+    text-align:center;
+    color:#b48b5a;
+}
+.galeria{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+.card{
+    background:#fff;
+    margin:12px;
+    padding:10px;
+    border-radius:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    text-align:center;
+}
+.card img{
+    width:180px;
+    border-radius:12px;
+}
+.card button{
+    margin-top:8px;
+    background:#b48b5a;
+    color:#fff;
+    border:none;
+    padding:6px 12px;
+    border-radius:20px;
+    cursor:pointer;
+}
+.card button:hover{
+    background:#9c7447;
+}
+.archivo{
+    margin:10px;
+}
+.footer{
+    text-align:center;
+    margin-top:40px;
+    font-style:italic;
+}
+</style>
+</head>
+<body>
+
+<div class="overlay">
+<h1>💍 Nuestra Boda 💍</h1>
+<p style="text-align:center;">Gracias por compartir este día tan especial con nosotros</p>
+<p style="text-align:center;">EyL</p>
+
+<div class="galeria" id="galeria"></div>
+<div id="archivos" style="text-align:center;"></div>
+
+<div class="footer">Con amor eterno ❤️</div>
+</div>
+
+<script>
+function cargarContenido(){
+    const data = JSON.parse(localStorage.getItem("contenido")) || [];
+    const galeria = document.getElementById("galeria");
+    const archivos = document.getElementById("archivos");
+
+    galeria.innerHTML = "";
+    archivos.innerHTML = "";
+
+    data.forEach((item, index) => {
+        if(item.tipo.startsWith("image")){
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const img = document.createElement("img");
+            img.src = item.data;
+
+            const btn = document.createElement("button");
+            btn.textContent = "Eliminar";
+            btn.onclick = () => eliminar(index);
+
+            card.appendChild(img);
+            card.appendChild(btn);
+            galeria.appendChild(card);
+        } else {
+            const div = document.createElement("div");
+            div.className = "archivo";
+
+            const a = document.createElement("a");
+            a.href = item.data;
+            a.download = item.nombre;
+            a.textContent = "📄 " + item.nombre;
+
+            const btn = document.createElement("button");
+            btn.textContent = "Eliminar";
+            btn.onclick = () => eliminar(index);
+
+            div.appendChild(a);
+            div.appendChild(document.createElement("br"));
+            div.appendChild(btn);
+            archivos.appendChild(div);
+        }
+    });
+}
+
+function eliminar(index){
+    if(!confirm("¿Deseas eliminar este recuerdo?")) return;
+    let data = JSON.parse(localStorage.getItem("contenido")) || [];
+    data.splice(index,1);
+    localStorage.setItem("contenido", JSON.stringify(data));
+    cargarContenido();
+}
+
+cargarContenido();
+setInterval(cargarContenido,2000);
+</script>
+
+</body>
+</html>
